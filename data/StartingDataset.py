@@ -1,39 +1,45 @@
 import torch
 import pandas as pd
+from PIL import Image as img
 import os
 import cv2
-from torchvision import transforms
+from torchvision import transforms as transformers
+import constants
 
-wow = pd.read_csv("train.csv")
-print(wow)
-print(wow.groupby(["label"]).count())
+# wow = pd.read_csv("train.csv")
+# print(wow)
+# print(wow.groupby(["label"]).count())
 
 class StartingDataset(torch.utils.data.Dataset):
     """
     Dataset that contains 100000 3x224x224 black images (all zeros).
     """
 
-    def __init__(self):
-        path = "/cassava-leaf-disease-classification/train.csv"
-        data_csv = pd.read_csv(path)
-        
-        self.image_ids = data_csv["image_id"]
-        
-        self.labels = data_csv["label"]
+    def __init__(self, csv_path, im_path, training_set=True):
+        data = pd.read_csv(csv_path)
+        self.image_id = data['image_id']
+        self.labels = data['label']
+        self.im_path = im_path
+
+        if training_set:
+            self.image_id = self.image_id[:constants.TRAIN_NUM]
+            self.labels = self.labels[:constants.TRAIN_NUM]
+        else:
+            self.image_id = self.image_id[constants.TRAIN_NUM: ]
+            self.labels = self.labels[constants.TRAIN_NUM: ]
 
 
 
 
     def __getitem__(self, index):
-        path_image = "~/Desktop/cassava-leaf-disease-classification/train_images" #path to the training image folder
+        id = self.image_id.iloc[index]
+        label = torch.tensor(int(self.labels.iloc[index]))
 
-        image_id = self.image_ids.iloc[index]
-        label = torch.Tensor(int(self.labels.iloc[index]))
-        both = (image_id, label)
-        image = cv2.imread(os.path.join(path_image, image_id))
-        #image_array = torch.Tensor(image)
-        image_array = (transforms.toTensor()(image),label)
-        return image_array
+        img_path = constants.IMG_PATH + id
+
+        image = img.open(img_path).resize((800, 600))
+        
+        return (transformers.ToTensor()(image), label)
 
     def __len__(self):
         return len(self.labels)

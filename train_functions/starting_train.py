@@ -94,18 +94,19 @@ def evaluate(val_loader, model, loss_fn):
     But also look out for patterns of overfitting (validation loss curve 
     up), it needs to stop then.
     """
-    model.eval()
-    count, loss, correct = 0, 0, 0
-    with torch.no_grad():
-        for batch in tqdm(val_loader):
-            images, labels = batch
-            outputs = model(images)
+    # model.eval()
+    # count, loss, correct = 0, 0, 0
+    # with torch.no_grad():
+    #     for batch in tqdm(val_loader):
+    #         images, labels = batch
+    #         outputs = model(images)
 
-            loss += loss_fn(outputs, labels).mean().item()
-            count += len(labels)
-            correct += (torch.argmax(outputs, dim=1) == labels).sum().item()
+    #         loss += loss_fn(outputs, labels).mean().item()
+    #         count += len(labels)
+    #         correct += (torch.argmax(outputs, dim=1) == labels).sum().item()
 
-    accuracy = correct / count
-    return loss, accuracy
+    # accuracy = correct / count
+    # return loss, accuracy
+    pass
     
     

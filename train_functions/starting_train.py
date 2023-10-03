@@ -50,20 +50,16 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
             print('Epoch:', epoch, 'Loss:', loss.item())
 
             # Periodically evaluate our model + log to Tensorboard
-            if step % n_eval == 0:
-                # TODO:
-                # Compute training loss and accuracy.
-                # Log the results to Tensorboard.
-                tra_acc = compute_accuracy(outputs, labels)
-                print("training accuracy is : ", tra_acc)
-                # TODO:
-                # Compute validation loss and accuracy.
-                # Log the results to Tensorboard.
-                # Don't forget to turn off gradient calculations!
-                val_loss, val_acc = evaluate(val_loader, model, loss_fn)
-                print("validation loss is : ", val_loss, " and accuracy is : ", val_acc)
+            if (step) % n_eval == 0:
+                train_accuracy = compute_accuracy(pred, label_data)
+                print(f"    Train Accu: {train_accuracy}")
+
+                valid_loss, valid_accuracy = evaluate(val_loader, model, loss_fn)
+                print(f"    Valid Loss: {valid_loss}")
+                print(f"    Valid Accu: {valid_accuracy}")
 
             model.train()
+
             step += 1
 
         print()

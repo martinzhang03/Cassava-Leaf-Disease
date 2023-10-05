@@ -51,9 +51,10 @@ def starting_train(train_dataset, val_dataset, model, hyperparameters, n_eval):
 
             # Periodically evaluate our model + log to Tensorboard
             if (step) % n_eval == 0:
-                train_accuracy = compute_accuracy(pred, label_data)
+                # TODO: deleted
+                train_accuracy = compute_accuracy(outputs, labels)
                 print(f"    Train Accu: {train_accuracy}")
-
+                # TODO: 
                 valid_loss, valid_accuracy = evaluate(val_loader, model, loss_fn)
                 print(f"    Valid Loss: {valid_loss}")
                 print(f"    Valid Accu: {valid_accuracy}")
@@ -94,19 +95,18 @@ def evaluate(val_loader, model, loss_fn):
     But also look out for patterns of overfitting (validation loss curve 
     up), it needs to stop then.
     """
-    # model.eval()
-    # count, loss, correct = 0, 0, 0
-    # with torch.no_grad():
-    #     for batch in tqdm(val_loader):
-    #         images, labels = batch
-    #         outputs = model(images)
+    model.eval()
+    count, loss, correct = 0, 0, 0
+    with torch.no_grad():
+        for batch in tqdm(val_loader):
+            images, labels = batch
+            outputs = model(images)
 
-    #         loss += loss_fn(outputs, labels).mean().item()
-    #         count += len(labels)
-    #         correct += (torch.argmax(outputs, dim=1) == labels).sum().item()
+            loss += loss_fn(outputs, labels).mean().item()
+            count += len(labels)
+            correct += (torch.argmax(outputs, dim=1) == labels).sum().item()
 
-    # accuracy = correct / count
-    # return loss, accuracy
-    pass
+    accuracy = correct / count
+    return loss, accuracy
     
     
